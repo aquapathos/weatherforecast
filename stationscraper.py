@@ -121,3 +121,11 @@ class AmedasStationScraper(object):
         df.drop(['url', 'info', 'lat0', 'lat1', 'lon0', 'lon1','alt'], inplace=True, axis=1)
         df.drop_duplicates(inplace=True)
         return df.reset_index(drop=True)
+
+    # 観測所IDを取得
+    def getID(self, locName, items=['prec_no','block_no']):
+      dtmp = self.stations[self.stations['観測所']==locName]
+      ans = list()
+      for item in items:
+        ans.append(dtmp[item].values[0])
+      return ans
