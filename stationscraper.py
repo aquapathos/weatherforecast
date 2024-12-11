@@ -3,26 +3,22 @@ import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 import re
-
 class AmedasStationScraper(object):
     """
     stations = AmedasStationScraper().stations で stations に取得した観測所情報を格納
     """
     def __init__(self, file_path = None, encoding='utf-8'):
         self.encoding = encoding
-
         if file_path is None: # csvファイルが与えられていない場合は掻き集めてくる
             self.stations = self.scrap()
         else:
             self.stations = pd.read_csv( file_path, encoding = self.encoding)
-
     # 指定されたURL用のBeautifulSoupを生成
     def get_soup(self, url):
         html = requests.get(url)
         html.encoding = self.encoding
         soup = BeautifulSoup(html.text, "html.parser")
         return soup
-
     # 気象庁データから気象データを取得
     def scrap(self):
         area_list, area_link_list = self.get_all_area_link()
@@ -36,7 +32,6 @@ class AmedasStationScraper(object):
         area_list = [element['alt'] for element in elements] # alt（観測所名）を取り出す
         area_link_list = [element['href'] for element in elements] # URLを取り出す
         return area_list, area_link_list
-
     # 与えられたエリアページを訪問し、全観測局のリンクを取り出してデータフレーム化
     def get_all_stations(self, area_list, area_link_list) -> pd.DataFrame:
         dflists = []
@@ -44,7 +39,6 @@ class AmedasStationScraper(object):
             dflists.append(self.get_station_data(area, area_link))
         stdf = pd.concat(dflists).reset_index(drop=True)
         return self.format_df(stdf)
-
     # 与えられたエリアページを訪問し、全観測局のリンクを取り出してデータフレーム化
     def get_station_data(self, area, area_link) -> pd.DataFrame:
         url = 'https://www.data.jma.go.jp/obd/stats/etrn/select/' + area_link
@@ -62,7 +56,6 @@ class AmedasStationScraper(object):
         df = pd.DataFrame(data)
         df['地域'] = area
         return df[['地域', '観測所', 'url', 'info']]
-
     def defaultfind(self, pattern, s, default=None, callback=None):
         cont = re.findall(pattern, s)
         if len(cont) == 0:
@@ -71,7 +64,6 @@ class AmedasStationScraper(object):
             if callback is not None:
                 return callback(cont[0])
             return cont[0]
-
     def format_df(self, df):
         # prec_no
         df['prec_no'] = df.url.apply(
@@ -121,9 +113,8 @@ class AmedasStationScraper(object):
         df.drop(['url', 'info', 'lat0', 'lat1', 'lon0', 'lon1','alt'], inplace=True, axis=1)
         df.drop_duplicates(inplace=True)
         return df.reset_index(drop=True)
-
     # 観測所IDを取得
-    def getID(self, locName, items=['prec_no','block_no']):
+    def getID(self, locName, items=['prec_no','block_no','type']):
       dtmp = self.stations[self.stations['観測所']==locName]
       ans = list()
       for item in items:
