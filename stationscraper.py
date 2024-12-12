@@ -12,7 +12,7 @@ class AmedasStationScraper(object):
         if file_path is None: # csvファイルが与えられていない場合は掻き集めてくる
             self.stations = self.scrap()
         else:
-            self.stations = pd.read_csv( file_path, encoding = self.encoding)
+            self.stations = pd.read_csv( file_path, dtype=str, encoding = self.encoding)
     # 指定されたURL用のBeautifulSoupを生成
     def get_soup(self, url):
         html = requests.get(url)
