@@ -118,5 +118,5 @@ class AmedasStationScraper(object):
       dtmp = self.stations[self.stations['観測所']==locName]
       ans = list()
       for item in items:
-        ans.append(dtmp[item].values[0])
+        ans.append(str(dtmp[item].values[0]))
       return ans
