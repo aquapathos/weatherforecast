@@ -67,12 +67,12 @@ class AmedasStationScraper(object):
     def format_df(self, df):
         # prec_no
         df['prec_no'] = df.url.apply(
-            lambda x: self.defaultfind("prec_no=\d{1,2}&", x))
+            lambda x: self.defaultfind("prec_no=\d{1,2}&", str(x)))
         df = df.dropna()
         df.prec_no = df.prec_no.apply(lambda x: x[8:-1])
         # block_no
         df['block_no'] = df.url.apply(
-            lambda x: self.defaultfind("block_no=\d{4,6}&", x))
+            lambda x: self.defaultfind("block_no=\d{4,6}&", str(x)))
         df = df.dropna()
         df.block_no = df.block_no.apply(lambda x: x[9:-1])
         # type
